@@ -1,0 +1,11 @@
+# exclude all files in the developer dependencies folder
+node_modules/
+
+
+# exclude all files in the IDE folder
+.idea/
+.vscode/
+
+# exclude heavy files
+public/
+logs/
