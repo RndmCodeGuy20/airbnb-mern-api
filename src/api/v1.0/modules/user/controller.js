@@ -16,4 +16,11 @@ export const api = {
       info: 'user fetched',
     });
   }),
+  login: catchAsync(async (req, res) => {
+    const response = await userService.login(req.body);
+
+    res.jsend.success(response, {
+      info: 'User logged in successfully',
+    });
+  }),
 };

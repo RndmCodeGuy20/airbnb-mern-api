@@ -1,5 +1,20 @@
 import mongoose from 'mongoose';
 
+const addressSchema = mongoose.Schema({
+  street: {
+    type: String,
+    required: [true, 'street is required'],
+  },
+  city: {
+    type: String,
+    required: [true, 'city is required'],
+  },
+  state: {
+    type: String,
+    required: [true, 'state is required'],
+  },
+});
+
 
 // eslint-disable-next-line new-cap
 const userSchema = mongoose.Schema({
@@ -11,10 +26,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: false,
   },
-  address: {
-    type: String,
-    required: true,
-  },
+  address: addressSchema,
   phoneNumber: {
     type: String,
     required: false,
@@ -27,6 +39,15 @@ const userSchema = mongoose.Schema({
   password: {
     type: String,
     required: [true, 'password is required'],
+  },
+  created_at: {
+    type: Date,
+    default: Date.now,
+
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now,
   },
 });
 

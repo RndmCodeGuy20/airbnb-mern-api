@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import userRoutes from './modules/user/routes';
+import hotelRoutes from './modules/hotel/routes';
 
 const router = new Router();
 
@@ -8,5 +9,6 @@ router.get('/', (req, res) => {
 });
 
 router.use(userRoutes);
+router.use(hotelRoutes);
 
 export default router;

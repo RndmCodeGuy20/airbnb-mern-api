@@ -51,10 +51,7 @@ class UserService {
 
       const user = {
         id: registerUser._id,
-        firstName: registerUser.firstName,
-        lastName: registerUser.lastName,
         email: registerUser.email,
-        password: hashedPassword,
       };
 
       const response = {
@@ -69,14 +66,48 @@ class UserService {
     }
   }
 
+  /**
+	 * @desc login user
+	 * @param {{email: String, password: String}} body
+	 * @return {Promise<void>}
+	 */
   async login(body) {
     try {
       if (!body.email || !body.password) {
         throw new UserApiError('Credentials not provided', StatusCodes.BAD_REQUEST, ERROR_CODES.INVALID);
       }
 
+      /**
+			 * @desc find user by email
+			 */
+      const user = await User.findOne({ email: body.email },
+          { email: 1, password: 1, address: 1, firstName: 1, lastName: 1 });
 
+      if (user === null) {
+        throw new UserApiError('User not found',
+            StatusCodes.BAD_REQUEST,
+            ERROR_CODES.INVALID);
+      }
 
+      const isPasswordMatched = await compareHash(body.password, user.password);
+
+      if (!isPasswordMatched) {
+        throw new UserApiError('Invalid password',
+            StatusCodes.BAD_REQUEST,
+            ERROR_CODES.INVALID);
+      }
+
+      const response = {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        address: user.address,
+        token: generateToken({ _id: user._id, email: user.email }),
+        refresh_token: generateRefreshToken({ _id: user._id, email: user.email }),
+      };
+
+      return response;
     } catch (error) {
       throw error;
     }
