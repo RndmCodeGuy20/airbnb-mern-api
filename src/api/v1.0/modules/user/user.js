@@ -8,7 +8,7 @@ import {
   generateHash,
   compareHash,
 } from '#utils/index';
-import { logger } from '#helpers/index';
+import mongoose from 'mongoose';
 
 /**
  * @class UserService
@@ -113,15 +113,82 @@ class UserService {
     }
   }
 
+  async getUserById(body) {
+    try {
+      const userId = body.id;
+      console.log(userId);
+
+      const user = await User.findOne({
+        _id: new mongoose.Types.ObjectId(userId),
+      }, {
+        firstName: 1, lastName: 1, email: 1, address: 1, phoneNumber: 1,
+      });
+
+      if (user === null) {
+        throw new UserApiError('User not found',
+            StatusCodes.BAD_REQUEST,
+            ERROR_CODES.INVALID);
+      }
+
+      return user;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async updateUserById(body) {
+    try {
+      const user = await User.findOne({
+        _id: new mongoose.Types.ObjectId(body.id),
+      });
+      console.log(user, body);
+      const isPasswordMatched = await compareHash(body.password, user.password);
+
+      if (!isPasswordMatched) {
+        throw new UserApiError('Password does not match', ERROR_CODES.INVALID, StatusCodes.UNAUTHORIZED);
+      }
+
+      await User.updateOne({ _id: new mongoose.Types.ObjectId(user.id) }, {
+        $set: {
+          firstName: body.firstName,
+          lastName: body.lastName,
+          email: body.email,
+        },
+      });
+    } catch (e) {
+      throw e;
+    }
+  }
+
   /**
 	 * @desc get all users
 	 * @param {{}} body
 	 * @return {Promise<Query<any, any, unknown, any>>}
 	 */
   async getUser(body) {
-    const user = await User.find({});
+    try {
+      const user = await User.find({
+        _id: new mongoose.Types.ObjectId(body.id),
+      }, {
+        firstName: 1, lastName: 1, email: 1, address: 1, phoneNumber: 1,
+      });
 
-    return user;
+      if (user === null) {
+        throw new UserApiError('User not found',
+            StatusCodes.BAD_REQUEST,
+            ERROR_CODES.INVALID);
+      }
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteUser(body) {
+    const id = body.id;
+
+    await User.deleteOne({ _id: new mongoose.Types.ObjectId(id) });
   }
 }
 

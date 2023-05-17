@@ -4,8 +4,8 @@
 class UserApiError extends Error {
   /**
 	 * @param {String} message
-	 * @param {Number} httpStatus
-	 * @param {String} errorCode
+	 * @param {string} httpStatus
+	 * @param {StatusCodes.BAD_REQUEST} errorCode
 	 */
   constructor(message, httpStatus, errorCode) {
     super(message);

@@ -4,7 +4,7 @@
 class HotelApiError extends Error {
   /**
 	 * @param {String} message
-	 * @param {Number} httpStatus
+	 * @param {string} httpStatus
 	 * @param {String} errorCode
 	 */
   constructor(message, httpStatus, errorCode) {
